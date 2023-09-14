@@ -7,6 +7,7 @@ const errorHandler = require("./middleware/errorHandler");
 const xss = require("xss")
 let morgan;
 require("dotenv").config({path: "./.env"});
+const PORT = process.env.PORT || 3000;
 if(process.env.NODE_ENV == "development") {
     require("colors");
     morgan = require("morgan");
@@ -55,6 +56,6 @@ app.use("*", (req, res) => {
     res.sendFile(path.join(__dirname, "/dist/WDJ/browser", "index.html"))
 })
 
-app.listen(process.env.PORT || 5000, () => {
-    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${process.env.PORT || 8080}`.bgYellow)
+app.listen(PORT, () => {
+    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${process.env.PORT || PORT}`.bgYellow)
 })
