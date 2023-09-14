@@ -8,10 +8,7 @@
     }
   ],
   "routes": [
-    {
-      "src": "/favicon.ico",
-      "dest": "/dist/WDJ/browser/favicon.ico"
-    },
+ 
     {
       "src": "/(.*)",
       "dest": "server.js"
