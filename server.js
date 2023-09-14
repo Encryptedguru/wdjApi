@@ -49,6 +49,10 @@ app.use("/api/v1/auth", require("./routes/Auth"));
 
 connectDb();
 
+app.get("/favicon.ico", (req, res) => {
+    res.status(204).end()
+})
+
 //errorHandler middleware
 app.use(errorHandler)
 
