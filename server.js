@@ -5,6 +5,7 @@ const path = require("path");
 const connectDb = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
 const xss = require("xss")
+const favicon = require("serve-favicon")
 let morgan;
 require("dotenv").config({path: "./.env"});
 const PORT = process.env.PORT || 3000;
@@ -34,7 +35,9 @@ app.use((req, res, next) => {
 
 //static folder and files
 app.use("/ArticleImages", express.static(path.join(__dirname, "ArticleImages")))
-app.use("/favicon.ico", express.static(path.join(__dirname, "public")))
+
+
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 //mount routers
 
