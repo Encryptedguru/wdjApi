@@ -36,17 +36,17 @@ app.use((req, res, next) => {
 app.use("/ArticleImages", express.static(path.join(__dirname, "ArticleImages")))
 
 
-
-app.use("/", express.static(path.join(__dirname, '/dist/WDJ/browser')));
 //mount routers
 
 app.use("/api/v1/articles", require("./routes/Article"));
 app.use("/api/v1/auth", require("./routes/Auth"));
 
+app.get("/", (req, res) => {
+    res.send(`<h1 style="text-align: center;">WDJ API RUNNING HERE</h1>`)
+})
 
-// app.set('view')
 
-
+//connect to database
 connectDb();
 
 
@@ -54,9 +54,7 @@ connectDb();
 //errorHandler middleware
 app.use(errorHandler)
 
-app.use("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "/dist/WDJ/browser", "index.html"))
-})
+
 
 app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${process.env.PORT || PORT}`.bgYellow)
