@@ -15,8 +15,6 @@
   "author": "Njugush",
   "license": "MIT",
   "dependencies": {
-    "@nguniversal/express-engine": "^16.2.0",
-    "@nguniversal/module-map-ngfactory-loader": "^8.2.6",
     "bcrypt": "^5.1.0",
     "colors": "^1.4.0",
     "dompurify": "^3.0.5",
