@@ -8,7 +8,7 @@ const xss = require("xss")
 const favicon = require("serve-favicon")
 let morgan;
 require("dotenv").config({path: "./.env"});
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 if(process.env.NODE_ENV == "development") {
     require("colors");
     morgan = require("morgan");
@@ -70,7 +70,7 @@ const server = app.listen(PORT, () => {
 
 //Handle unhandled rejection
 process.on('unhandledRejection', (err, promise) => {
-    console.log(`Error: ${err.message}`.bgRed.bold)
+    console.log(`Error: unhandaledrejection ${err.message}`.bgRed.bold)
     //close connection and exit
     server.close(() => process.exit(1))
   })
