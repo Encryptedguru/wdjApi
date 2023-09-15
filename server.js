@@ -36,8 +36,13 @@ app.use((req, res, next) => {
 //static folder and files
 app.use("/ArticleImages", express.static(path.join(__dirname, "ArticleImages")))
 
+app.get("/favicon.ico", (req, res) => {
+    res.setHeader("Content-Type", "image/x-icon")
+    res.sendFile(path.join(__dirname, "public", "favicon.ico"));
+})
 
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+
+// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 //mount routers
 
