@@ -3,15 +3,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.js",
+      "src": "server.js", // app staring point
       "use": "@now/node"
     }
   ],
   "routes": [
- 
     {
       "src": "/(.*)",
-      "dest": "server.js"
+      "dest": "server.js" // app staring point
     }
   ]
 }
