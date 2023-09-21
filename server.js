@@ -45,18 +45,17 @@ app.use("/ArticleImages", express.static(path.join(__dirname, "ArticleImages")))
 app.use("/api/v1/articles", require("./routes/Article"));
 app.use("/api/v1/auth", require("./routes/Auth"));
 
-app.get("/", (req, res) => {
-    res.send(`<h1 style="text-align: center;">WDJ API RUNNING HERE</h1>`)
-})
 
 
 //connect to database
 connectDb()
 
-
+//serve static files
+app.use("*", (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist/WDJ/browser', 'index.html'))
+})
 //errorHandler middleware
 app.use(errorHandler)
-
 
 
 
