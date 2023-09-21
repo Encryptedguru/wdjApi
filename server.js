@@ -55,7 +55,6 @@ app.get("/", (req, res) => {
 
 
 //connect to database
-connectDb();
 
 
 
