@@ -36,7 +36,7 @@ app.use((req, res, next) => {
 
 //static folder and files
 app.use("/ArticleImages", express.static(path.join(__dirname, "ArticleImages")))
-
+app.use("/", express.static(path.join(__dirname, "dist/WDJ/browser")))
 
 
 
