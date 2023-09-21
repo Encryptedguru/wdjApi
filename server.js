@@ -5,13 +5,13 @@ const path = require("path");
 const connectDb = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
 const xss = require("xss")
-const serverless = require("serverless-http")
-const favicon = require("serve-favicon")
+
+
 let morgan;
-require("dotenv").config({path: "../.env"});
-const PORT = 3000;
+require("dotenv").config({path: "./.env"});
+const PORT = process.env.PORT || 3000
+require("colors");
 if(process.env.NODE_ENV == "development") {
-    require("colors");
     morgan = require("morgan");
 
     app.use(morgan())
@@ -37,13 +37,8 @@ app.use((req, res, next) => {
 //static folder and files
 app.use("/ArticleImages", express.static(path.join(__dirname, "ArticleImages")))
 
-app.get("/favicon.ico", (req, res) => {
-    res.setHeader("Content-Type", "image/x-icon")
-    res.sendFile(path.join(__dirname, "public", "favicon.ico"));
-})
 
 
-// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 //mount routers
 
@@ -63,16 +58,15 @@ connectDb()
 app.use(errorHandler)
 
 
-const handler = serverless(app);
 
-module.exports = handler;
-// const server = app.listen(PORT, () => {
-//     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${process.env.PORT || PORT}`.bgYellow)
-// })
 
-// //Handle unhandled rejection
-// process.on('unhandledRejection', (err, promise) => {
-//     console.log(`Error: unhandaledrejection ${err.message}`.bgRed.bold)
-//     //close connection and exit
-//     server.close(() => process.exit(1))
-//   })
+const server = app.listen(PORT, () => {
+    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${process.env.PORT || PORT}`.bgYellow)
+})
+
+//Handle unhandled rejection
+process.on('unhandledRejection', (err, promise) => {
+    console.log(`Error: unhandaledrejection ${err.message}`.bgRed.bold)
+    //close connection and exit
+    server.close(() => process.exit(1))
+  })
