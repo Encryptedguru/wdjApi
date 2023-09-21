@@ -1,5 +1,5 @@
-const { JSDOM } = require('jsdom')
 const mongoose = require("mongoose");
+const { JSDOM } = require('jsdom')
 const marked = require("marked");
 const {mangle} = require("marked-mangle");
 const createDomPurify = require("dompurify")
@@ -94,7 +94,7 @@ articleSchema.pre("save", async function(next) {
 
 
 articleSchema.pre("findOneAndRemove", async function(next) {
-    console.log(this.models);
+   
     await Comment.deleteMany({article: this._id})
     next();
 })
