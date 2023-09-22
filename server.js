@@ -46,7 +46,6 @@ app.use("/api/v1/articles", require("./routes/Article"));
 app.use("/api/v1/auth", require("./routes/Auth"));
 
 
-
 //connect to database
 connectDb()
 
