@@ -38,7 +38,7 @@ auth.signUp = wrapAsync(async (req, res, next) => {
    
     user = await User.create(req.body)
     
-    const confirmUrl = `${req.protocol}://${req.get("host")}/api/v1/auth/confirmEmail/${token}`
+    const confirmUrl = `${req.protocol}://${req.get("host")}/confirmEmail?c=${token}`
 
     const mail = {
        
@@ -58,7 +58,7 @@ auth.signUp = wrapAsync(async (req, res, next) => {
 
     const mailBody = mailGenerator.generate(mail);
 
-    require("fs").writeFileSync("preview.html", mailBody, 'utf-8');
+    
 
     const mailOptions = {
         from: process.env.EMAIL,
@@ -92,7 +92,7 @@ auth.login = wrapAsync(async(req, res, next) => {
 
     const isMatch = await user.passwordIsMatch(req.body.password);
 
-    if(!isMatch) return next(new ServerError(400, "Invalid logins, xtry again"));
+    if(!isMatch) return next(new ServerError(400, "Invalid logins, try again"));
 
     sendTokenResponse(res, user, 200);
 })
@@ -218,7 +218,7 @@ auth.forgotPassword = wrapAsync(async (req, res, next) => {
         html: mailBody
     }
 
-     await sendMail(mailOptio-ns);
+     await sendMail(mailOptions);
     //Send email to them with a 
     res.status(200).json({success: true, msg: "An email has been sent to your email account"})
 })
@@ -275,6 +275,7 @@ auth.confirmEmail = wrapAsync(async (req, res, next) => {
     }
 
     user.emailConfirmed = true;
+    user.confirmToken = undefined
    
      user.save({ validateBeforeSave: false})
   
