@@ -169,7 +169,7 @@ auth.getMe = wrapAsync(async (req, res, next) => {
 //@Todo send the recipient an email
 auth.forgotPassword = wrapAsync(async (req, res, next) => {
      
-    const email = typeof req.body.email == "string" && req.body.email.length > 0 ? req.body.email : false;
+    const email = typeof req.body.email == "string" && req.body.email.length > 0 ? req.body.email.toLowerCase() : false;
 
     if(!email) {
         return next(new ServerError(400, "Missing Fields"))
