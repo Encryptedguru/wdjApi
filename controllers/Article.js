@@ -3,7 +3,7 @@ const User = require("../models/User");
 const slugify = require("slugify");
 const wrapAsync = require("../utils/wrapAsync");
 const ServerError = require("../utils/error");
-
+const mongoose = require("mongoose")
 
 
 const article = Object.create(null);
@@ -83,7 +83,6 @@ article.updateArticle = wrapAsync(async(req, res, next) => {
         req.body.body = article.parseBody(req.body.body);
     }
 
-    console.log(req.body);
     req.body.lastUpdated = Date.now();
 
     article = await Article.findByIdAndUpdate(id, req.body, {new: true, runValidators: true});
@@ -126,27 +125,29 @@ article.likeArticle = wrapAsync(async (req, res, next) => {
     if(!article) {
         return next(new ServerError(404, "article not found"));
     }
-    let user;
-    //unauthorize if already liked unlike
+    
+
+    // if already liked unlike
     if(req.user.likes.includes(id)) {
-       article = await Article.findByIdAndUpdate(id, {$inc: {likes: -1}}, {runValidators: true, new: true});
-       user = await User.findByIdAndUpdate(req.user._id, {$pull: {likes: id}}, {runValidators: true, new: true})
+         req.user.likes.pull(id)
+         req.user.save({validateBeforeSave: false})
+       article = await Article.findByIdAndUpdate(id, {$inc: {likes: -1}}, {runValidators: true, new: true}).populate("author", "username avatar description").populate({path: "comments", options: {sort: {createdAt: -1}}, populate: {path: "author", select: "avatar username role"}});
      
     } else {
-        article = await Article.findByIdAndUpdate(id, {$inc: {likes: 1}}, {new: true, runValidators: true});
-    
-    
-         user = await User.findByIdAndUpdate(req.user._id, {$push: {likes: id}}, {runValidators: true, new: true});
+
+        req.user.likes.push(id);
+        req.user.save({validateBeforeSave: false});
+
+        article = await Article.findByIdAndUpdate(id, {$inc: {likes: 1}}, {new: true, runValidators: true}).populate("author", "username avatar description").populate({path: "comments", options: {sort: {createdAt: -1}}, populate: {path: "author", select: "avatar username role"}});    
     }
       
-    res.status(200).json({success: true, article, user})
+    res.status(200).json({success: true, article, user: req.user})
 })
 
 //view article
 
 article.view = wrapAsync(async(req, res, next) => {
     const { id } = req.params;
-
     let article = await Article.findById(id);
 
     if(!article) {
@@ -154,7 +155,7 @@ article.view = wrapAsync(async(req, res, next) => {
     }
 
     article = await Article.findByIdAndUpdate(id, {$inc: {viewed: 1}}, {runValidators: true, new: true});
-
+ 
     res.status(200).json({success: true, article});
 })
 

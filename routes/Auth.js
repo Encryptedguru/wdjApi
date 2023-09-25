@@ -8,9 +8,11 @@ const authMid = require("../middleware/auth");
 
 const upload = multer({storage})
 
-router.route("/:id")
+router.route("/users/:id")
+      .get(authMid.protect, auth.getUser)
       .patch(authMid.protect, authMid.authorize("user", "master", "writer"), upload.single("avatar"), auth.updateUser)
-      .delete(authMid.protect, authMid.authorize("master"), auth.deleteUser);
+      .delete(authMid.protect, authMid.authorize("master"), auth.deleteUser)
+
 
 router.route("/signup")
       .post(upload.single('avatar'), auth.signUp)
@@ -21,8 +23,9 @@ router.route("/login")
 router.route("/confirmEmail/:tokenId")
       .get(auth.confirmEmail);
 
-router.route("/getUsers")
+router.route("/users")
       .get(auth.getUsers);
+
 
 router.route("/forgotpassword")
       .post(auth.forgotPassword)

@@ -5,6 +5,7 @@ const path = require("path");
 const connectDb = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
 const xss = require("xss")
+const helmet = require("helmet");
 
 
 let morgan;
@@ -23,8 +24,7 @@ app.use(express.urlencoded({extended: true}));
 
 //prevent from no sql injection
 app.use(mongoSanitize({replaceWith: "_"}))
-// //prevent xss attacks
-// app.use(xss())
+
 //allows cors
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -34,6 +34,16 @@ app.use((req, res, next) => {
     next()
 })
 
+app.use(
+    helmet({
+      contentSecurityPolicy: false,
+      referrerPolicy: { policy: 'no-referrer' },
+      frameguard: { action: 'deny' }, 
+      hsts: { maxAge: 31536000, includeSubDomains: true }, 
+      noSniff: true,
+      xssFilter: true,
+    })
+  );
 //static folder and files
 app.use("/ArticleImages", express.static(path.join(__dirname, "ArticleImages")))
 app.use("/", express.static(path.join(__dirname, "dist/WDJ/browser")))

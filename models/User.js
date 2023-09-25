@@ -37,9 +37,9 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
-    likes: {
-        type: Array
-    },
+    likes: [
+        {type: Schema.Types.ObjectId, ref: 'Article'}
+    ],
     description: {
         type: String
     },
@@ -60,7 +60,9 @@ const userSchema = new Schema({
 
 
 userSchema.pre("save", async function(next) {
-    this.password = await bcrypt.hash(this.password, 10);
+    if(this.password) {
+        this.password = await bcrypt.hash(this.password, 10);
+    }
     next();
 })
 

@@ -25,7 +25,7 @@ const auth = Object.create(null)
 auth.signUp = wrapAsync(async (req, res, next) => {
 
     
-    req.body.email = req.body.email.toLowerCase();
+    req.body.email = req.body.email.toLowerCase().trim();
     let user = await User.findOne({email: req.body.email});
 
     if(user) {
@@ -38,7 +38,7 @@ auth.signUp = wrapAsync(async (req, res, next) => {
    
     user = await User.create(req.body)
     
-    const confirmUrl = `${req.protocol}://${req.get("host")}/confirmEmail?c=${token}`
+    const confirmUrl = `${req.protocol}://${req.get("host")}/auth/confirmEmail?c=${token}`
 
     const mail = {
        
@@ -62,7 +62,7 @@ auth.signUp = wrapAsync(async (req, res, next) => {
 
     const mailOptions = {
         from: process.env.EMAIL,
-        to: req.body.email,
+        to: req.body.email.toLowerCase().trim(),
         subject: "Confirm Email For WDJ",
         html: mailBody
     }
@@ -83,7 +83,7 @@ auth.signUp = wrapAsync(async (req, res, next) => {
 //@Todo send token response
 auth.login = wrapAsync(async(req, res, next) => {
   
-    req.body.email = req.body.email.toLowerCase();
+    req.body.email = req.body.email.toLowerCase().trim();
     const user = await User.findOne({email: req.body.email}).select("+password");
 
     if(!user) {
@@ -113,7 +113,7 @@ auth.updateUser = wrapAsync(async (req, res, next)  => {
     }
     
     //forbid if logged in user is not owner or role == master
-    if(req.user.role !== "master" || user._id.toString() !== req.user._id.toString()) {
+    if(req.user.role !== "master" && user._id.toString() !== req.user._id.toString()) {
         return next(new ServerError(403, "You are forbidden from this action"))
     }
     
@@ -139,7 +139,7 @@ auth.deleteUser = wrapAsync(async (req, res, next) =>  {
     }
 
       //forbid if logged in user is not owner or role == master
-      if(req.user.role !== "master" || user._id.toString() !== req.user._id.toString()) {
+      if(req.user.role !== "master" && user._id.toString() !== req.user._id.toString()) {
         return next(new ServerError(403, "You are forbidden from this action"))
     }
 
@@ -156,6 +156,15 @@ auth.getUsers = wrapAsync(async (req, res, next) => {
     res.status(200).json({success: true, users});
 })
 
+auth.getUser = wrapAsync(async (req, res, next) => {
+    let user = await User.findById(req.params.id).populate({path: "likes", select: 'title description articleImage tags category slug createdAt', populate: {path: 'author', select:"avatar username"}})
+
+    if(!user) {
+        return next(new ServerError(404, "User not found"));
+    }
+    
+    res.status(200).json({success: true, user})
+})
 //get me
 //@ logged in user
 auth.getMe = wrapAsync(async (req, res, next) => {
@@ -169,8 +178,7 @@ auth.getMe = wrapAsync(async (req, res, next) => {
 //@Todo send the recipient an email
 auth.forgotPassword = wrapAsync(async (req, res, next) => {
      
-    const email = typeof req.body.email == "string" && req.body.email.length > 0 ? req.body.email.toLowerCase() : false;
-
+    const email = typeof req.body.email == "string" && req.body.email.trim().length > 0 ? req.body.email.toLowerCase().trim() : false;
     if(!email) {
         return next(new ServerError(400, "Missing Fields"))
     }
@@ -189,7 +197,7 @@ auth.forgotPassword = wrapAsync(async (req, res, next) => {
  
       user.save({validateBeforeSave: false});
 
-    const resetPasswordUrl = `${req.protocol}://${req.get("host")}/resetpassword/?token=${token}`
+    const resetPasswordUrl = `${req.protocol}://${req.get("host")}/auth/resetpassword/?token=${token}`
 
     const mail = {
        
