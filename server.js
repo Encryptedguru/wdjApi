@@ -49,7 +49,6 @@ app.use("/ArticleImages", express.static(path.join(__dirname, "ArticleImages")))
 app.use("/", express.static(path.join(__dirname, "dist/WDJ/browser")))
 
 
-
 //mount routers
 
 app.use("/api/v1/articles", require("./routes/Article"));
